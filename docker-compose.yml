@@ -1,0 +1,42 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  ros_humble_dev:
+    build: .
+    container_name: humble_env # 컨테이너 이름이 'humble_env'인 것으로 보아 container_name도 이렇게 수정해야겠네요.
+
+    environment:
+      - DISPLAY=${DISPLAY}
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - humble_ws_data:/root/ros_ws/
+
+    devices:
+      - /dev/video0:/dev/video0
+
+    ipc: host
+    network_mode: host
+
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu, utility]
+
+    working_dir: /root/ros_ws
+
+    # ****** 이 부분을 수정하세요! ******
+    # 컨테이너가 계속 실행되도록 하는 명령
+    command: bash -c "tail -f /dev/null"
+    # 또는
+    # command: sleep infinity
+    # ********************************
+
+    privileged: true
+
+volumes:
+  humble_ws_data:
