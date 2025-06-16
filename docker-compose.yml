@@ -1,42 +1,44 @@
-# docker-compose.yml
-version: '3.8'
-
 services:
-  ros_humble_dev:
-    build: .
-    container_name: humble_env # 컨테이너 이름이 'humble_env'인 것으로 보아 container_name도 이렇게 수정해야겠네요.
+  humble_ws:
+    image: ros2-cuda-humble:latest
+    container_name: humble_ws
+    
+    # GPU를 사용하는 경우 (NVIDIA GPU, nvidia-container-toolkit 설치 필요)
+    # runtime: nvidia
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=all # compute,utility,graphics,video,display 등 필요한 기능 추가
 
-    environment:
-      - DISPLAY=${DISPLAY}
-
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - humble_ws_data:/root/ros_ws/
-
-    devices:
-      - /dev/video0:/dev/video0
-
-    ipc: host
-    network_mode: host
-
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: all
-    #           capabilities: [gpu, utility]
-
-    working_dir: /root/ros_ws
-
-    # ****** 이 부분을 수정하세요! ******
-    # 컨테이너가 계속 실행되도록 하는 명령
-    command: bash -c "tail -f /dev/null"
-    # 또는
-    # command: sleep infinity
-    # ********************************
+    # `--gpus` 옵션은 Docker Compose v3.8 이상에서만 지원되며,
+    # `runtime: nvidia`와 함께 사용하거나 단독으로 사용 가능합니다.
+    # 단독 사용 시에는 Docker Compose 파일의 최상위 level에
+    # `x-ndv: "gpu"`와 같이 서비스 정의 외부에 추가 설정이 필요할 수 있습니다.
+    # 여기서는 `runtime: nvidia`를 사용하는 것이 더 일반적입니다.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # 모든 GPU 사용
+              capabilities: [gpu, compute, utility, graphics] # 필요한 기능 명시
 
     privileged: true
+    network_mode: host
+    ipc: host
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev/video0:/dev/video0
+      - ~/humble_ws:/root/ros_ws/ 
+    working_dir: /root/ros_ws
+    
+    # 컨테이너가 시작될 때 자동으로 실행할 명령 (Dockerfile CMD를 오버라이드)
+    # `docker run`의 `--entrypoint` 또는 CMD와 유사
+    command: ["bash"] 
 
+# 명명된 볼륨 정의 (컨테이너 간 데이터 공유 또는 영구 저장용)
 volumes:
-  humble_ws_data:
+  humble_ws:
+    # driver: local # 로컬 파일 시스템 드라이버 (기본값)
+    # name: custom_humble_ws_volume # 볼륨 이름 명시 (선택 사항)
