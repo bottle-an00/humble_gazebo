@@ -53,7 +53,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN rosdep init && rosdep update
- 
+
+RUN apt update && \
+    apt install --no-install-recommends -y build-essential cmake git libbullet-dev \
+    python3-colcon-common-extensions python3-flake8 python3-pip \
+    python3-pytest-cov python3-rosdep python3-setuptools python3-vcstool \
+    wget python3-argcomplete && \
+    \
+    python3 -m pip install -U flake8-blind-except flake8-builtins \
+    flake8-class-newline flake8-comprehensions flake8-deprecated \
+    flake8-docstrings flake8-import-order flake8-quotes \
+    pytest-repeat pytest-rerunfailures pytest && \
+    \
+    apt install --no-install-recommends -y libasio-dev libtinyxml2-dev libcunit1-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # 6. ROS2 환경 설정 스크립트 소싱 (매번 수동으로 할 필요 없도록)
 COPY bashrc_config.txt /tmp/bashrc_config_temp.txt
 
