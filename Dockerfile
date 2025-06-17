@@ -6,8 +6,9 @@ FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
 # 2. 필요한 환경 변수 설정 (옵션이지만 권장)
 #    이것은 컨테이너가 GPU를 인식하고 사용할 수 있도록 합니다.
 #    NVIDIA CUDA 이미지에는 이미 설정되어 있을 수 있지만 명시적으로 넣어주는 것이 좋습니다.
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,graphics # 그래픽 관련 기능도 필요할 수 있으므로 추가
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+# 그래픽 관련 기능도 필요할 수 있으므로 추가
 
 # 3. 시스템 업데이트 및 필수 패키지 설치
 #    ROS2 설치에 필요한 기본 유틸리티 및 라이브러리 설치
@@ -50,6 +51,7 @@ ENV LANG="en_US.UTF-8" \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-desktop \
     ros-dev-tools \
+    ros-humble-tiago-gazebo \
     && rm -rf /var/lib/apt/lists/*
 
 RUN rosdep init && rosdep update
