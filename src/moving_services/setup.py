@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'custom_interface_example'
+package_name = 'moving_services'
 
 setup(
     name=package_name,
@@ -13,15 +13,15 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='root',
-    maintainer_email='sjba10815@gmail.com',
+    maintainer='spoons',
+    maintainer_email='hitls123@naver.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'robot_status_publisher=custom_interface_example.robot_status_publisher:main',
-            'movement_server=custom_interface_example.movement_server:main',
+            'circle = moving_services.circle:main',
+            'spin = moving_services.spin:main',
         ],
     },
 )
