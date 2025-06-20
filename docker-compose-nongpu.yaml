@@ -1,22 +1,12 @@
+# base image가 nvidia cuda와 cuDNN 버전이지만 노트북과 같이 gpu연결을 하지 못하는 경우
 services:
   humble_ws:
-    image: humble-gpu-env:latest
+    image: humble-env:latest
     container_name: humble_ws
     
-    runtime: nvidia
     environment:
       - DISPLAY=${DISPLAY}
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all # compute,utility,graphics,video,display 등 필요한 기능 추가
-
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all # 모든 GPU 사용
-              capabilities: [gpu, compute, utility, graphics] # 필요한 기능 명시
-
+    
     privileged: true
     network_mode: host
     ipc: host
